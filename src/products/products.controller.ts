@@ -2,14 +2,15 @@ import { Controller, Get, Post, Patch, Delete, Param, Body, Query } from '@nestj
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
+import { FindProductsDto } from './dto/find-products.dto';
 
 @Controller('products')
 export class ProductsController {
   constructor(private readonly service: ProductsService) {}
 
   @Get()
-  findAll(@Query('category') category?: string) {
-    return this.service.findAll(category);
+  findAll(@Query() query: FindProductsDto) {
+    return this.service.findAll(query);
   }
 
   @Get('slug/:slug')

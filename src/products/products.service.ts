@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { Product } from './entities/product.entity';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
+import { FindProductsDto } from './dto/find-products.dto';
 
 @Injectable()
 export class ProductsService {
@@ -12,11 +13,50 @@ export class ProductsService {
     private readonly repo: Repository<Product>,
   ) {}
 
-  findAll(categorySlug?: string) {
-    if (categorySlug) {
-      return this.repo.find({ where: { categorySlug } });
+  async findAll({ category, search, brand, minPrice, maxPrice, page = 1, limit = 20 }: FindProductsDto) {
+    const qb = this.repo.createQueryBuilder('product');
+
+    if (category) {
+      qb.andWhere('product.categorySlug = :category', { category });
     }
-    return this.repo.find();
+
+    if (search) {
+      qb.andWhere(
+        '(product.name ILIKE :search OR product.brand ILIKE :search)',
+        { search: `%${search}%` },
+      );
+    }
+
+    if (brand) {
+      const brands = brand.split(',').map((b) => b.trim()).filter(Boolean);
+      if (brands.length === 1) {
+        qb.andWhere('product.brand = :brand', { brand: brands[0] });
+      } else if (brands.length > 1) {
+        qb.andWhere('product.brand IN (:...brands)', { brands });
+      }
+    }
+
+    if (minPrice !== undefined) {
+      qb.andWhere('product.price >= :minPrice', { minPrice });
+    }
+
+    if (maxPrice !== undefined) {
+      qb.andWhere('product.price <= :maxPrice', { maxPrice });
+    }
+
+    const [data, total] = await qb
+      .orderBy('product.createdAt', 'DESC')
+      .skip((page - 1) * limit)
+      .take(limit)
+      .getManyAndCount();
+
+    return {
+      data,
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    };
   }
 
   async findOne(id: string) {
