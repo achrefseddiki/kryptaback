@@ -1,4 +1,4 @@
-import { Entity, PrimaryColumn, Column, OneToMany } from 'typeorm';
+import { Entity, PrimaryColumn, Column } from 'typeorm';
 
 @Entity('categories')
 export class Category {
@@ -7,4 +7,10 @@ export class Category {
 
   @Column()
   label: string;
+
+  @Column({ nullable: true, type: 'varchar' })
+  parentSlug: string | null;
+
+  @Column({ nullable: true, type: 'varchar' })
+  img: string | null;
 }

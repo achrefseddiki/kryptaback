@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Patch, Delete, Param, Body } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Delete, Param, Body, Query } from '@nestjs/common';
 import { CategoriesService } from './categories.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
@@ -8,7 +8,9 @@ export class CategoriesController {
   constructor(private readonly service: CategoriesService) {}
 
   @Get()
-  findAll() {
+  findAll(@Query('root') root?: string, @Query('parent') parent?: string) {
+    if (root === 'true') return this.service.findRoots();
+    if (parent) return this.service.findChildren(parent);
     return this.service.findAll();
   }
 

@@ -9,6 +9,8 @@ import { BlogPostsModule } from './blog-posts/blog-posts.module';
 import { DropsModule } from './drops/drops.module';
 import { ReviewsModule } from './reviews/reviews.module';
 import { BuildsModule } from './builds/builds.module';
+import { UsersModule } from './users/users.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -33,6 +35,8 @@ import { BuildsModule } from './builds/builds.module';
     DropsModule,
     ReviewsModule,
     BuildsModule,
+    UsersModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -16,6 +16,14 @@ export class CategoriesService {
     return this.repo.find();
   }
 
+  findRoots() {
+    return this.repo.find({ where: { parentSlug: null as any } });
+  }
+
+  findChildren(parentSlug: string) {
+    return this.repo.find({ where: { parentSlug } });
+  }
+
   async findOne(slug: string) {
     const category = await this.repo.findOne({ where: { slug } });
     if (!category) throw new NotFoundException(`Category '${slug}' not found`);
