@@ -25,6 +25,9 @@ export class Product {
   @Column()
   img: string;
 
+  @Column({ type: 'text', array: true, default: '{}' })
+  images: string[];
+
   @Column({ type: 'varchar', nullable: true })
   badge: string | null;
 

@@ -25,6 +25,11 @@ export class CreateProductDto {
   @IsNotEmpty()
   img: string;
 
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  images?: string[];
+
   @IsString()
   @IsOptional()
   badge?: string | null;

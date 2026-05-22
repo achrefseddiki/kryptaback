@@ -2,6 +2,7 @@ import { Injectable, NotFoundException, ConflictException } from '@nestjs/common
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Product } from './entities/product.entity';
+import { Category } from '../categories/entities/category.entity';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { FindProductsDto } from './dto/find-products.dto';
@@ -11,13 +12,17 @@ export class ProductsService {
   constructor(
     @InjectRepository(Product)
     private readonly repo: Repository<Product>,
+    @InjectRepository(Category)
+    private readonly categoryRepo: Repository<Category>,
   ) {}
 
   async findAll({ category, search, brand, minPrice, maxPrice, page = 1, limit = 20 }: FindProductsDto) {
     const qb = this.repo.createQueryBuilder('product');
 
     if (category) {
-      qb.andWhere('product.categorySlug = :category', { category });
+      const children = await this.categoryRepo.find({ where: { parentSlug: category } });
+      const slugs = [category, ...children.map((c) => c.slug)];
+      qb.andWhere('product.categorySlug IN (:...slugs)', { slugs });
     }
 
     if (search) {
