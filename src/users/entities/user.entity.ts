@@ -13,8 +13,14 @@ export class User {
   @Column({ unique: true })
   email: string;
 
-  @Column({ select: false })
-  password: string;
+  @Column({ type: 'varchar', select: false, nullable: true, default: null })
+  password: string | null;
+
+  @Column({ type: 'varchar', nullable: true, default: null })
+  provider: string | null;
+
+  @Column({ type: 'varchar', nullable: true, default: null })
+  providerId: string | null;
 
   @Column()
   firstName: string;
