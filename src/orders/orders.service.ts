@@ -4,12 +4,14 @@ import { Repository } from 'typeorm';
 import { Order } from './entities/order.entity';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { FindOrdersDto } from './dto/find-orders.dto';
+import { MailService } from '../mail/mail.service';
 
 @Injectable()
 export class OrdersService {
   constructor(
     @InjectRepository(Order)
     private readonly repo: Repository<Order>,
+    private readonly mailService: MailService,
   ) {}
 
   async create(dto: CreateOrderDto): Promise<Order> {
@@ -22,8 +24,27 @@ export class OrdersService {
       status: 'pending',
       paymentMethod: dto.paymentMethod ?? 'cod',
       userId: dto.userId ?? null,
+      email: dto.email ?? null,
     });
-    return this.repo.save(order);
+    const saved = await this.repo.save(order);
+
+    if (saved.email) {
+      this.mailService.sendOrderConfirmation(saved.email, {
+        id: saved.id,
+        firstName: saved.firstName,
+        lastName: saved.lastName,
+        items: saved.items,
+        subtotal: saved.subtotal,
+        total: saved.total,
+        address: saved.address,
+        city: saved.city,
+        governorate: saved.governorate,
+        phone: saved.phone,
+        createdAt: saved.createdAt,
+      });
+    }
+
+    return saved;
   }
 
   async findByUser(userId: string) {

@@ -4,17 +4,20 @@ import * as bcrypt from 'bcrypt';
 import { UsersService } from '../users/users.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
+import { MailService } from '../mail/mail.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
+    private readonly mailService: MailService,
   ) {}
 
   async register(dto: RegisterDto) {
     const hashed = await bcrypt.hash(dto.password, 10);
     const user = await this.usersService.create({ ...dto, password: hashed });
+    this.mailService.sendWelcome(user.email, user.firstName);
     return this.sign(user.id, user.email);
   }
 
@@ -33,7 +36,8 @@ export class AuthService {
     firstName: string;
     lastName: string;
   }): Promise<string> {
-    const user = await this.usersService.findOrCreateOAuth(data);
+    const { user, isNew } = await this.usersService.findOrCreateOAuth(data);
+    if (isNew) this.mailService.sendWelcome(user.email, user.firstName);
     return this.sign(user.id, user.email).access_token;
   }
 

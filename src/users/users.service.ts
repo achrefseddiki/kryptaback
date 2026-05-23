@@ -68,20 +68,20 @@ export class UsersService {
     return this.repo.save(user);
   }
 
-  async findOrCreateOAuth(data: OAuthUserData): Promise<User> {
+  async findOrCreateOAuth(data: OAuthUserData): Promise<{ user: User; isNew: boolean }> {
     const existing = await this.repo.findOne({
       where: { provider: data.provider, providerId: data.providerId },
     });
-    if (existing) return existing;
+    if (existing) return { user: existing, isNew: false };
 
     const byEmail = await this.repo.findOne({ where: { email: data.email } });
     if (byEmail) {
       byEmail.provider = data.provider;
       byEmail.providerId = data.providerId;
-      return this.repo.save(byEmail);
+      return { user: await this.repo.save(byEmail), isNew: false };
     }
 
-    return this.repo.save(
+    const user = await this.repo.save(
       this.repo.create({
         email: data.email,
         firstName: data.firstName,
@@ -92,5 +92,6 @@ export class UsersService {
         role: UserRole.USER,
       }),
     );
+    return { user, isNew: true };
   }
 }

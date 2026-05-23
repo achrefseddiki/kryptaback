@@ -52,6 +52,9 @@ export class Order {
   @Column({ type: 'varchar', nullable: true, default: null })
   userId: string | null;
 
+  @Column({ type: 'varchar', nullable: true, default: null })
+  email: string | null;
+
   @CreateDateColumn()
   createdAt: Date;
 }

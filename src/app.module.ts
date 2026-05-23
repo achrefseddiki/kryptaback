@@ -13,6 +13,9 @@ import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { OrdersModule } from './orders/orders.module';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
+import { HeroContentModule } from './hero-content/hero-content.module';
+import { FeaturedBuildsModule } from './featured-builds/featured-builds.module';
+import { BuilderAiModule } from './builder-ai/builder-ai.module';
 
 @Module({
   imports: [
@@ -41,6 +44,9 @@ import { CloudinaryModule } from './cloudinary/cloudinary.module';
     AuthModule,
     OrdersModule,
     CloudinaryModule,
+    HeroContentModule,
+    FeaturedBuildsModule,
+    BuilderAiModule,
   ],
   controllers: [AppController],
   providers: [AppService],
