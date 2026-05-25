@@ -31,6 +31,9 @@ export class User {
   @Column({ type: 'enum', enum: UserRole, default: UserRole.USER })
   role: UserRole;
 
+  @Column({ type: 'text', array: true, default: '{}' })
+  wishlistProductIds: string[];
+
   @CreateDateColumn()
   createdAt: Date;
 

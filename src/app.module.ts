@@ -16,6 +16,9 @@ import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import { HeroContentModule } from './hero-content/hero-content.module';
 import { FeaturedBuildsModule } from './featured-builds/featured-builds.module';
 import { BuilderAiModule } from './builder-ai/builder-ai.module';
+import { OffersModule } from './offers/offers.module';
+import { RepairRequestsModule } from './repair-requests/repair-requests.module';
+import { KryptaBuildsModule } from './krypta-builds/krypta-builds.module';
 
 @Module({
   imports: [
@@ -47,6 +50,9 @@ import { BuilderAiModule } from './builder-ai/builder-ai.module';
     HeroContentModule,
     FeaturedBuildsModule,
     BuilderAiModule,
+    OffersModule,
+    RepairRequestsModule,
+    KryptaBuildsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

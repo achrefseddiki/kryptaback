@@ -1,8 +1,9 @@
 import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { User, UserRole } from './entities/user.entity';
+import { Product } from '../products/entities/product.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 
@@ -19,6 +20,8 @@ export class UsersService {
   constructor(
     @InjectRepository(User)
     private readonly repo: Repository<User>,
+    @InjectRepository(Product)
+    private readonly productRepo: Repository<Product>,
   ) {}
 
   async findAll(): Promise<User[]> {
@@ -66,6 +69,29 @@ export class UsersService {
     if (dto.lastName) user.lastName = dto.lastName;
 
     return this.repo.save(user);
+  }
+
+  async getWishlist(userId: string): Promise<Product[]> {
+    const user = await this.repo.findOne({ where: { id: userId } });
+    if (!user) throw new NotFoundException('User not found');
+    if (!user.wishlistProductIds?.length) return [];
+    return this.productRepo.find({ where: { id: In(user.wishlistProductIds) } });
+  }
+
+  async addToWishlist(userId: string, productId: string): Promise<void> {
+    const user = await this.repo.findOne({ where: { id: userId } });
+    if (!user) throw new NotFoundException('User not found');
+    if (!user.wishlistProductIds.includes(productId)) {
+      user.wishlistProductIds = [...user.wishlistProductIds, productId];
+      await this.repo.save(user);
+    }
+  }
+
+  async removeFromWishlist(userId: string, productId: string): Promise<void> {
+    const user = await this.repo.findOne({ where: { id: userId } });
+    if (!user) throw new NotFoundException('User not found');
+    user.wishlistProductIds = user.wishlistProductIds.filter((id) => id !== productId);
+    await this.repo.save(user);
   }
 
   async findOrCreateOAuth(data: OAuthUserData): Promise<{ user: User; isNew: boolean }> {

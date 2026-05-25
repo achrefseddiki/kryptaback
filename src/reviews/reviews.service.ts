@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Review } from './entities/review.entity';
 import { Product } from '../products/entities/product.entity';
+import { Offer } from '../offers/entities/offer.entity';
 import { CreateReviewDto } from './dto/create-review.dto';
 
 @Injectable()
@@ -12,6 +13,8 @@ export class ReviewsService {
     private readonly reviewRepo: Repository<Review>,
     @InjectRepository(Product)
     private readonly productRepo: Repository<Product>,
+    @InjectRepository(Offer)
+    private readonly offerRepo: Repository<Offer>,
   ) {}
 
   async findByProduct(productId: string) {
@@ -20,10 +23,22 @@ export class ReviewsService {
     return this.reviewRepo.find({ where: { productId }, order: { createdAt: 'DESC' } });
   }
 
+  async findByOffer(offerId: string) {
+    const offer = await this.offerRepo.findOne({ where: { id: offerId } });
+    if (!offer) throw new NotFoundException(`Offer '${offerId}' not found`);
+    return this.reviewRepo.find({ where: { offerId }, order: { createdAt: 'DESC' } });
+  }
+
   async create(productId: string, dto: CreateReviewDto) {
     const product = await this.productRepo.findOne({ where: { id: productId } });
     if (!product) throw new NotFoundException(`Product '${productId}' not found`);
     return this.reviewRepo.save(this.reviewRepo.create({ ...dto, productId }));
+  }
+
+  async createForOffer(offerId: string, dto: CreateReviewDto) {
+    const offer = await this.offerRepo.findOne({ where: { id: offerId } });
+    if (!offer) throw new NotFoundException(`Offer '${offerId}' not found`);
+    return this.reviewRepo.save(this.reviewRepo.create({ ...dto, offerId }));
   }
 
   async remove(id: string) {
