@@ -44,6 +44,10 @@ export class CreateProductDto {
   inStock?: boolean;
 
   @IsString()
+  @IsOptional()
+  description?: string | null;
+
+  @IsString()
   @IsNotEmpty()
   categorySlug: string;
 }

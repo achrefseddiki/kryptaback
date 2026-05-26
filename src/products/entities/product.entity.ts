@@ -37,6 +37,9 @@ export class Product {
   @Column({ default: true })
   inStock: boolean;
 
+  @Column({ type: 'text', nullable: true, default: null })
+  description: string | null;
+
   @Column()
   categorySlug: string;
 

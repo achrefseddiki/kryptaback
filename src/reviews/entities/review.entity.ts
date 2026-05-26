@@ -10,6 +10,9 @@ export class Review {
   @Column()
   author: string;
 
+  @Column({ type: 'varchar', nullable: true, default: null })
+  userId: string | null;
+
   @Column({ type: 'int' })
   rating: number;
 

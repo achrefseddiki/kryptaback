@@ -19,6 +19,7 @@ import { BuilderAiModule } from './builder-ai/builder-ai.module';
 import { OffersModule } from './offers/offers.module';
 import { RepairRequestsModule } from './repair-requests/repair-requests.module';
 import { KryptaBuildsModule } from './krypta-builds/krypta-builds.module';
+import { PromoCodesModule } from './promo-codes/promo-codes.module';
 
 @Module({
   imports: [
@@ -53,6 +54,7 @@ import { KryptaBuildsModule } from './krypta-builds/krypta-builds.module';
     OffersModule,
     RepairRequestsModule,
     KryptaBuildsModule,
+    PromoCodesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -5,6 +5,7 @@ import { Order } from './entities/order.entity';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { FindOrdersDto } from './dto/find-orders.dto';
 import { MailService } from '../mail/mail.service';
+import { PromoCodesService } from '../promo-codes/promo-codes.service';
 
 @Injectable()
 export class OrdersService {
@@ -12,21 +13,42 @@ export class OrdersService {
     @InjectRepository(Order)
     private readonly repo: Repository<Order>,
     private readonly mailService: MailService,
+    private readonly promoCodesService: PromoCodesService,
   ) {}
 
   async create(dto: CreateOrderDto): Promise<Order> {
     const subtotal = dto.items.reduce((sum, i) => sum + i.price * i.qty, 0);
+
+    let discountAmount = 0;
+    let promoCode: string | null = null;
+
+    if (dto.promoCode) {
+      try {
+        const promo = await this.promoCodesService.validate(dto.promoCode, dto.userId);
+        discountAmount = Math.round(subtotal * promo.discountPercent / 100 * 100) / 100;
+        promoCode = promo.code;
+      } catch {
+        // invalid code — ignore discount, place order at full price
+      }
+    }
+
     const order = this.repo.create({
       ...dto,
       notes: dto.notes ?? null,
       subtotal,
-      total: subtotal,
+      discountAmount,
+      total: Math.max(0, subtotal - discountAmount),
       status: 'pending',
       paymentMethod: dto.paymentMethod ?? 'cod',
       userId: dto.userId ?? null,
       email: dto.email ?? null,
+      promoCode,
     });
     const saved = await this.repo.save(order);
+
+    if (promoCode && dto.userId) {
+      await this.promoCodesService.markUsed(promoCode, dto.userId);
+    }
 
     if (saved.email) {
       this.mailService.sendOrderConfirmation(saved.email, {

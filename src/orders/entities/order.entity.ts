@@ -55,6 +55,12 @@ export class Order {
   @Column({ type: 'varchar', nullable: true, default: null })
   email: string | null;
 
+  @Column({ type: 'varchar', nullable: true, default: null })
+  promoCode: string | null;
+
+  @Column({ type: 'float', default: 0 })
+  discountAmount: number;
+
   @CreateDateColumn()
   createdAt: Date;
 }

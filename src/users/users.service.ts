@@ -78,6 +78,15 @@ export class UsersService {
     return this.productRepo.find({ where: { id: In(user.wishlistProductIds) } });
   }
 
+  async getPublicWishlist(userId: string): Promise<{ firstName: string; products: Product[] }> {
+    const user = await this.repo.findOne({ where: { id: userId } });
+    if (!user) throw new NotFoundException('User not found');
+    const products = user.wishlistProductIds?.length
+      ? await this.productRepo.find({ where: { id: In(user.wishlistProductIds) } })
+      : [];
+    return { firstName: user.firstName, products };
+  }
+
   async addToWishlist(userId: string, productId: string): Promise<void> {
     const user = await this.repo.findOne({ where: { id: userId } });
     if (!user) throw new NotFoundException('User not found');

@@ -34,4 +34,9 @@ export class UsersController {
   removeFromWishlist(@CurrentUser() user: { id: string }, @Param('productId') productId: string) {
     return this.usersService.removeFromWishlist(user.id, productId);
   }
+
+  @Get(':id/wishlist')
+  getPublicWishlist(@Param('id') id: string) {
+    return this.usersService.getPublicWishlist(id);
+  }
 }

@@ -1,6 +1,7 @@
-import { Controller, Get, Post, Delete, Param, Body } from '@nestjs/common';
+import { Controller, Get, Post, Delete, Param, Body, UseGuards, Request, HttpCode } from '@nestjs/common';
 import { ReviewsService } from './reviews.service';
 import { CreateReviewDto } from './dto/create-review.dto';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @Controller()
 export class ReviewsController {
@@ -12,8 +13,14 @@ export class ReviewsController {
   }
 
   @Post('products/:productId/reviews')
-  create(@Param('productId') productId: string, @Body() dto: CreateReviewDto) {
-    return this.service.create(productId, dto);
+  @UseGuards(JwtAuthGuard)
+  create(
+    @Param('productId') productId: string,
+    @Body() dto: CreateReviewDto,
+    @Request() req: any,
+  ) {
+    const author = `${req.user.firstName} ${req.user.lastName}`.trim();
+    return this.service.create(productId, dto, author, req.user.id);
   }
 
   @Get('offers/:offerId/reviews')
@@ -27,6 +34,7 @@ export class ReviewsController {
   }
 
   @Delete('reviews/:id')
+  @HttpCode(204)
   remove(@Param('id') id: string) {
     return this.service.remove(id);
   }

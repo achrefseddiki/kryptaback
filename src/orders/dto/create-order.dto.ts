@@ -27,4 +27,5 @@ export class CreateOrderDto {
   @IsOptional() @IsString() paymentMethod?: string;
   @IsOptional() @IsString() userId?: string;
   @IsOptional() @IsString() email?: string;
+  @IsOptional() @IsString() promoCode?: string;
 }

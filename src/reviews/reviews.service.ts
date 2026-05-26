@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Review } from './entities/review.entity';
@@ -29,10 +29,12 @@ export class ReviewsService {
     return this.reviewRepo.find({ where: { offerId }, order: { createdAt: 'DESC' } });
   }
 
-  async create(productId: string, dto: CreateReviewDto) {
+  async create(productId: string, dto: CreateReviewDto, author: string, userId: string) {
     const product = await this.productRepo.findOne({ where: { id: productId } });
     if (!product) throw new NotFoundException(`Product '${productId}' not found`);
-    return this.reviewRepo.save(this.reviewRepo.create({ ...dto, productId }));
+    const existing = await this.reviewRepo.findOne({ where: { productId, userId } });
+    if (existing) throw new ConflictException('You have already reviewed this product.');
+    return this.reviewRepo.save(this.reviewRepo.create({ ...dto, productId, author, userId }));
   }
 
   async createForOffer(offerId: string, dto: CreateReviewDto) {
