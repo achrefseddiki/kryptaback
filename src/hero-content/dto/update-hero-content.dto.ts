@@ -13,4 +13,8 @@ export class UpdateHeroContentDto {
   @IsOptional() @IsString() btn2LabelEn?: string;
   @IsOptional() @IsString() btn2LabelFr?: string;
   @IsOptional() @IsString() btn2Href?: string;
+  @IsOptional() @IsString() promoBanner1Img?: string;
+  @IsOptional() @IsString() promoBanner1Href?: string;
+  @IsOptional() @IsString() promoBanner2Img?: string;
+  @IsOptional() @IsString() promoBanner2Href?: string;
 }

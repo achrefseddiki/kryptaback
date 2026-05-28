@@ -29,8 +29,30 @@ export class ReviewsController {
   }
 
   @Post('offers/:offerId/reviews')
-  createForOffer(@Param('offerId') offerId: string, @Body() dto: CreateReviewDto) {
-    return this.service.createForOffer(offerId, dto);
+  @UseGuards(JwtAuthGuard)
+  createForOffer(
+    @Param('offerId') offerId: string,
+    @Body() dto: CreateReviewDto,
+    @Request() req: any,
+  ) {
+    const author = `${req.user.firstName} ${req.user.lastName}`.trim();
+    return this.service.createForOffer(offerId, dto, author, req.user.id);
+  }
+
+  @Get('krypta-builds/:buildId/reviews')
+  findByBuild(@Param('buildId') buildId: string) {
+    return this.service.findByBuild(buildId);
+  }
+
+  @Post('krypta-builds/:buildId/reviews')
+  @UseGuards(JwtAuthGuard)
+  createForBuild(
+    @Param('buildId') buildId: string,
+    @Body() dto: CreateReviewDto,
+    @Request() req: any,
+  ) {
+    const author = `${req.user.firstName} ${req.user.lastName}`.trim();
+    return this.service.createForBuild(buildId, dto, author, req.user.id);
   }
 
   @Delete('reviews/:id')

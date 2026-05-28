@@ -15,6 +15,9 @@ export class CreateKryptaBuildDto {
   tagline?: string;
 
   @IsOptional() @IsString()
+  description?: string;
+
+  @IsOptional() @IsString()
   badge?: string;
 
   @IsNumber() @Min(0)

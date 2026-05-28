@@ -23,6 +23,13 @@ export class OrdersController {
     return this.service.findByUser(user.id);
   }
 
+  @Get('stats')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN)
+  getStats(@Query('from') from?: string, @Query('to') to?: string) {
+    return this.service.getStats(from, to);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.service.findOne(id);

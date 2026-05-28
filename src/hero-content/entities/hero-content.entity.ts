@@ -40,4 +40,16 @@ export class HeroContent {
 
   @Column({ type: 'varchar', nullable: true, default: null })
   btn2Href: string | null;
+
+  @Column({ type: 'varchar', nullable: true, default: null })
+  promoBanner1Img: string | null;
+
+  @Column({ type: 'varchar', nullable: true, default: null })
+  promoBanner1Href: string | null;
+
+  @Column({ type: 'varchar', nullable: true, default: null })
+  promoBanner2Img: string | null;
+
+  @Column({ type: 'varchar', nullable: true, default: null })
+  promoBanner2Href: string | null;
 }

@@ -1,6 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, CreateDateColumn } from 'typeorm';
 import { Product } from '../../products/entities/product.entity';
 import { Offer } from '../../offers/entities/offer.entity';
+import { KryptaBuild } from '../../krypta-builds/entities/krypta-build.entity';
 
 @Entity('reviews')
 export class Review {
@@ -32,6 +33,13 @@ export class Review {
   @ManyToOne(() => Offer, { onDelete: 'CASCADE', nullable: true })
   @JoinColumn({ name: 'offerId' })
   offer: Offer | null;
+
+  @Column({ type: 'varchar', nullable: true, default: null })
+  buildId: string | null;
+
+  @ManyToOne(() => KryptaBuild, { onDelete: 'CASCADE', nullable: true })
+  @JoinColumn({ name: 'buildId' })
+  build: KryptaBuild | null;
 
   @CreateDateColumn()
   createdAt: Date;

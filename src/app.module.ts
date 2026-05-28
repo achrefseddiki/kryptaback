@@ -20,6 +20,10 @@ import { OffersModule } from './offers/offers.module';
 import { RepairRequestsModule } from './repair-requests/repair-requests.module';
 import { KryptaBuildsModule } from './krypta-builds/krypta-builds.module';
 import { PromoCodesModule } from './promo-codes/promo-codes.module';
+import { SearchModule } from './search/search.module';
+import { ShopsModule } from './shops/shops.module';
+import { PagesModule } from './pages/pages.module';
+import { ContactModule } from './contact/contact.module';
 
 @Module({
   imports: [
@@ -55,6 +59,10 @@ import { PromoCodesModule } from './promo-codes/promo-codes.module';
     RepairRequestsModule,
     KryptaBuildsModule,
     PromoCodesModule,
+    SearchModule,
+    ShopsModule,
+    PagesModule,
+    ContactModule,
   ],
   controllers: [AppController],
   providers: [AppService],

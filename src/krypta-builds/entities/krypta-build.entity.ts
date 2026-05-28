@@ -14,6 +14,9 @@ export class KryptaBuild {
   @Column({ type: 'varchar', nullable: true, default: null })
   badge: string | null;
 
+  @Column({ type: 'text', nullable: true, default: null })
+  description: string | null;
+
   @Column({ type: 'float' })
   price: number;
 
